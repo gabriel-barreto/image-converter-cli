@@ -1,5 +1,5 @@
 # Image Converter CLI
-Recieve image or folder path and convert into a base64 string, using a [zlib](https://docs.python.org/3/library/zlib.html) compression algorithm, write converted result in a *result.txt* file.
+Recieve image or folder path and convert into a base64 string, write converted result in a *result.txt* file.
 
 ## Usage
 - Clone repo or download **.py** file

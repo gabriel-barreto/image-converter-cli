@@ -8,7 +8,7 @@ import imghdr
 import os
 import threading
 import time
-import zlib
+from PIL import Image
 
 parser = argparse.ArgumentParser(
     prog="Img ===> b64", 
@@ -19,6 +19,12 @@ parser.add_argument(
     '--src',
     required=True,
     help="Path to image file or images folder"
+)
+
+parser.add_argument(
+    '--size',
+    required=False,
+    help="Image size"
 )
 
 def init():
@@ -41,9 +47,16 @@ def join(list, separator = ' '):
     return joinned_list[0:(len(joinned_list) - len(separator))]
 
 def convert(target):
+    print('Compressing {}...'.format(target))
+    image = Image.open(target, mode="r")
+    image.thumbnail(size)
+    image.save(target)
+    print('Resize to {}x{} ... OK!'.format(size[0], size[1]))
     with open(target, 'rb') as target:
-        value = base64.b64encode(zlib.compress(target.read(), level=9))
+        buffer = target.read()
+        value = base64.b64encode(buffer)
         result.append(value.decode('utf-8'))
+        print('Compressing {}... OK!'.format(target.name))
         return value
 
 class ThreadRunner(threading.Thread):
@@ -55,10 +68,13 @@ class ThreadRunner(threading.Thread):
         convert(self.target)
 
 result = []
+size = [300, 300]
 if __name__ == '__main__':
     initTime = time.time()
     init()
     path = parser.parse_args().src
+    if (parser.parse_args().size):
+        size = [int(size) for size in parser.parse_args().size.split(' ')]
 
     if (checkSrc(path)):
         convert(path)
