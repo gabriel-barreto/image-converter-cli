@@ -2,11 +2,13 @@
 #-*- coding:utf-8 -*-
 
 import argparse
+import bz2
 import base64
 import imghdr
 import os
 import threading
 import time
+import zlib
 
 parser = argparse.ArgumentParser(
     prog="Img ===> b64", 
@@ -40,8 +42,8 @@ def join(list, separator = ' '):
 
 def convert(target):
     with open(target, 'rb') as target:
-        value = base64.b64encode(target.read())
-        result.append(value.decode('ascii'))
+        value = base64.b64encode(zlib.compress(target.read(), level=9))
+        result.append(value.decode('utf-8'))
         return value
 
 class ThreadRunner(threading.Thread):
